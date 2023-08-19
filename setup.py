@@ -21,7 +21,6 @@ with open("HISTORY.rst") as history_file:
 
 requirements = [
     "kinparse >= 0.1.2",
-    "hierplace @ git+https://github.com/adamws/HierPlace@master",
 ]
 
 setup_requirements = [

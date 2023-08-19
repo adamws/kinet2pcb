@@ -14,7 +14,6 @@ import kinparse
 
 sys.path.append('/usr/lib/python3/dist-packages')
 import pcbnew
-import hierplace
 
 from .pckg_info import __version__
 
@@ -280,9 +279,6 @@ def kinet2pcb(netlist_origin, brd_filename, fp_lib_dirs=None):
     brd.BuildListOfNets()
     cnct.RecalculateRatsnest()
     pcbnew.Refresh()
-
-    # Place the board parts into non-overlapping areas that follow the design hierarchy.
-    hierplace.hier_place(brd)
 
     # Save the PCB into the KiCad PCB file.
     pcbnew.SaveBoard(brd_filename, brd)
