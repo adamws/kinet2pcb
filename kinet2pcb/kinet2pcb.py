@@ -257,23 +257,20 @@ def kinet2pcb(netlist_origin, brd_filename, fp_lib_dirs=None):
         # Connect the part pins on the netlist net to the PCB net.
         for pin in net.pins:
 
-            # Find the PCB module pad for the current part pin.
-            pad = None
+            # Find the PCB module
             try:
                 # Newer PCBNEW API.
                 module = brd.FindFootprintByReference(pin.ref)
-                if module:
-                    pad = module.FindPadByNumber(pin.num)
             except AttributeError:
                 # Older PCBNEW API.
                 module = brd.FindModuleByReference(pin.ref)
-                if module:
-                    pad = module.FindPadByName(pin.num)
 
-            # Connect the pad to the PCB net.
-            if pad:
-                cnct.Add(pad)
-                pad.SetNet(pcb_net)
+            if module:
+                # Connect all pads with matching pin number to the PCB net.
+                for p in module.Pads():
+                    if p.GetNumber() == pin.num:
+                        cnct.Add(p)
+                        p.SetNet(pcb_net)
 
     # Recalculate the PCB part and net data.
     brd.BuildListOfNets()
