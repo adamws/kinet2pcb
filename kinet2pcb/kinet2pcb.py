@@ -203,6 +203,11 @@ def kinet2pcb(netlist_origin, brd_filename, fp_lib_dirs=None):
     # Create a blank KiCad PCB.
     brd = pcbnew.BOARD()
 
+    # Using PCB_IO_KICAD_SEXPR instead of pcbnew.FootprintLoad
+    # because the latter is causing memory leaks problems
+    # https://gitlab.com/kicad/code/kicad/-/issues/22526
+    io_sexpr = pcbnew.PCB_IO_KICAD_SEXPR()
+
     # Get the netlist.
     if isinstance(netlist_origin, type('')):
         # Parse the netlist into an object if given a file name string.
@@ -221,7 +226,7 @@ def kinet2pcb(netlist_origin, brd_filename, fp_lib_dirs=None):
         lib_uri = fp_libs[fp_lib]
 
         # Create a module from the footprint file.
-        fp = pcbnew.FootprintLoad(lib_uri, fp_name)
+        fp = io_sexpr.FootprintLoad(lib_uri, fp_name)
         if not fp:
             # Could not find footprint so give warning and skip to next part.
             logger.warning("Unable to find footprint {fp_name} in {lib_uri}".format(**locals()))
